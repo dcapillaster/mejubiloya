@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Retenidos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Gloria+Hallelujah&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      font-family: "Gloria Hallelujah", "Patrick Hand", "Segoe Print", cursive;
+      color: #1a1a1a;
+       background: url("fondo1.png") center center / contain no-repeat fixed;
+    }
+
+    .scene {
+      position: relative;
+      min-height: 100vh;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.06), rgba(255,255,255,0.10));
+      pointer-events: none;
+    }
+
+    .note {
+      position: absolute;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.18);
+      line-height: 1.05;
+      letter-spacing: 0.02em;
+    }
+
+    .left {
+      top: 6.5%;
+      left: 14%; /* más a la derecha */
+      width: 22%;
+      text-align: left;
+      transform: rotate(-3deg);
+    }
+
+    .right {
+      top: 13%; /* más abajo */
+      right: 12%;
+      width: 28%;
+      text-align: center;
+      transform: rotate(-1deg);
+    }
+
+    .tiny {
+      font-size: clamp(14px, 1.8vw, 22px);
+      margin-bottom: 0.1em;
+      letter-spacing: 0.08em;
+    }
+
+    .big {
+      font-size: clamp(48px, 11vw, 120px);
+      font-weight: 900;
+      line-height: 0.85;
+      margin: 0.02em 0;
+    }
+
+    .mid {
+      font-size: clamp(18px, 2.5vw, 32px);
+      letter-spacing: 0.06em;
+    }
+
+    .stack {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: clamp(12px, 2vw, 26px);
+      flex-wrap: nowrap;
+      margin-top: 0.2em;
+    }
+
+    .sub {
+      font-size: clamp(13px, 1.5vw, 18px);
+      opacity: 0.95;
+      line-height: 1.05;
+      letter-spacing: 0.05em;
+    }
+
+    .scribble {
+      display: inline-block;
+      border-bottom: 2px solid rgba(0,0,0,0.28);
+      padding-bottom: 0.05em;
+    }
+
+    .footer {
+      position: absolute;
+      left: 5%;
+      right: 5%;
+      bottom: 4%;
+      text-align: center;
+      font-size: clamp(11px, 1.2vw, 16px);
+      color: rgba(0,0,0,0.65);
+      text-shadow: 0 1px 0 rgba(255,255,255,0.22);
+    }
+
+    @media (max-width: 900px) {
+      body {
+        background-position: center center;
+      }
+      .left {
+        top: 4%;
+        left: 4%;
+        width: 42%;
+      }
+      .right {
+        top: 4%;
+        right: 3%;
+        width: 43%;
+      }
+      .big {
+        font-size: clamp(34px, 11vw, 72px);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .left {
+        top: 3%;
+        left: 4%;
+        width: 44%;
+      }
+      .right {
+        top: 3%;
+        right: 2%;
+        width: 46%;
+      }
+      .tiny {
+        font-size: 11px;
+      }
+      .mid {
+        font-size: 14px;
+      }
+      .sub {
+        font-size: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="scene">
+    <div class="overlay"></div>
+
+    <section class="note left" aria-label="Días retenidos">
+      <div class="tiny">DÍAS</div>
+      <div class="big" id="daysSince">--</div>
+      <div class="mid">retenidos</div>
+      <div class="sub">desde el <span class="scribble">1/3/2026</span></div>
+    </section>
+
+    <section class="note right" aria-label="Cuenta atrás">
+      <div class="stack">
+        <div>
+          <div class="big" id="weeksLeft">--</div>
+          <div class="sub">semanas</div>
+        </div>
+        <div class="mid">y</div>
+        <div>
+          <div class="big" id="daysLeft">--</div>
+          <div class="sub">días</div>
+        </div>
+      </div>
+      <div class="tiny" style="margin-top:8px;">si salgo el <span class="scribble">1/6/2027</span></div>
+    </section>
+
+    <div class="footer" id="todayText"></div>
+  </main>
+
+  <script>
+    const MS_PER_DAY = 1000 * 60 * 60 * 24;
+
+    function startOfDay(date) {
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    }
+
+    function diffInDays(fromDate, toDate) {
+      return Math.round((startOfDay(toDate) - startOfDay(fromDate)) / MS_PER_DAY);
+    }
+
+    function updateCounters() {
+      const today = new Date();
+      const target = new Date(2027, 5, 1);
+      const start = new Date(2026, 2, 1);
+
+      const totalLeft = Math.max(0, diffInDays(today, target));
+      const weeks = Math.floor(totalLeft / 7);
+      const days = totalLeft % 7;
+      const daysSince = Math.max(0, diffInDays(start, today));
+
+      document.getElementById("weeksLeft").textContent = weeks;
+      document.getElementById("daysLeft").textContent = days;
+      document.getElementById("daysSince").textContent = daysSince;
+
+      document.getElementById("todayText").textContent =
+        "Actualizado a " +
+        today.toLocaleDateString("es-ES", {
+          day: "numeric",
+          month: "numeric",
+          year: "numeric"
+        });
+    }
+
+    updateCounters();
+    setInterval(updateCounters, 60000);
+  </script>
+</body>
+</html>
