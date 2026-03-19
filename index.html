@@ -1,284 +1,273 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Retenidos</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Gloria+Hallelujah&display=swap" rel="stylesheet">
+
   <style>
-    * { box-sizing: border-box; }
-    html, body { height: 100%; margin: 0; }
-    body {
-      font-family: "Gloria Hallelujah", "Patrick Hand", "Segoe Print", cursive;
-      color: #1a1a1a;
-       background: url("fondo1.png") center center / contain no-repeat fixed;
+    * {
+      box-sizing: border-box;
     }
 
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      font-family: "Gloria Hallelujah", "Patrick Hand", "Segoe Print", cursive;
+      background: #ececec;
+      color: #1a1a1a;
+    }
+
+    /* Contenedor general centrado */
+    .page {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 12px;
+    }
+
+    /*
+      Este contenedor mantiene SIEMPRE la proporción de la imagen.
+      Ajusta 1365 / 768 si tu fondo tiene otra resolución/proporción real.
+    */
     .scene {
       position: relative;
-      min-height: 100vh;
-      width: 100%;
+      width: min(100%, 1365px);
+      aspect-ratio: 1365 / 768;
       overflow: hidden;
+      background: #fff;
+    }
+
+    /* Imagen base */
+    .scene-image {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      user-select: none;
+      pointer-events: none;
     }
 
     .overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(to bottom, rgba(255,255,255,0.06), rgba(255,255,255,0.10));
+      background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.04),
+        rgba(255,255,255,0.08)
+      );
       pointer-events: none;
     }
 
     .note {
       position: absolute;
-      text-shadow: 0 1px 0 rgba(255,255,255,0.18);
-      line-height: 1.05;
-      letter-spacing: 0.02em;
+      z-index: 2;
+      line-height: 1.02;
+      letter-spacing: 0.01em;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.2);
     }
 
-     .left {
-      top: 6.5%;
-      left: 14%;
-      width: 22%;
-      text-align: left;
+    /* BLOQUE IZQUIERDO */
+    .left {
+      top: 7.2%;
+      left: 3.3%;
+      width: 14.5%;
+      text-align: center;
       transform: rotate(-3deg);
     }
 
+    /* BLOQUE DERECHO */
     .right {
-      top: 15%;
-      right: 12%;
+      top: 18.2%;
+      right: 4.5%;
       width: 28%;
       text-align: center;
       transform: rotate(-1deg);
     }
 
     .tiny {
-      font-size: clamp(14px, 1.8vw, 22px);
-      margin-bottom: 0.1em;
-      letter-spacing: 0.08em;
+      font-size: clamp(8px, 1.25vw, 22px);
+      line-height: 1.05;
+      margin-bottom: 0.15em;
+      letter-spacing: 0.05em;
     }
 
     .big {
-      font-size: clamp(48px, 11vw, 120px);
+      font-size: clamp(22px, 5vw, 86px);
       font-weight: 900;
-      line-height: 0.85;
+      line-height: 0.88;
       margin: 0.02em 0;
     }
 
     .mid {
-      font-size: clamp(18px, 2.5vw, 32px);
-      letter-spacing: 0.06em;
-    }
-
-    .stack {
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      gap: clamp(12px, 2vw, 26px);
-      flex-wrap: nowrap;
-      margin-top: 0.2em;
+      font-size: clamp(11px, 1.9vw, 32px);
+      line-height: 1.05;
     }
 
     .sub {
-      font-size: clamp(13px, 1.5vw, 18px);
-      opacity: 0.95;
+      font-size: clamp(8px, 1.05vw, 18px);
       line-height: 1.05;
-      letter-spacing: 0.05em;
+      opacity: 0.97;
     }
 
     .scribble {
       display: inline-block;
       border-bottom: 2px solid rgba(0,0,0,0.28);
-      padding-bottom: 0.05em;
+      padding-bottom: 0.02em;
+    }
+
+    /* Contador derecho */
+    .stack {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: clamp(4px, 0.8vw, 18px);
+      align-items: end;
+      justify-items: center;
+      margin-top: 0.1em;
+    }
+
+    .stack-item {
+      min-width: 0;
+    }
+
+    .right .big {
+      font-size: clamp(14px, 3.2vw, 58px);
+      line-height: 0.9;
+    }
+
+    .right .sub {
+      font-size: clamp(7px, 0.95vw, 18px);
+    }
+
+    .right-extra {
+      margin-top: 0.45em;
     }
 
     .footer {
       position: absolute;
-      left: 5%;
-      right: 5%;
-      bottom: 4%;
+      z-index: 2;
+      left: 0;
+      right: 0;
+      bottom: 1.8%;
       text-align: center;
-      font-size: clamp(11px, 1.2vw, 16px);
-      color: rgba(0,0,0,0.65);
+      font-size: clamp(7px, 0.95vw, 16px);
+      color: rgba(0,0,0,0.68);
       text-shadow: 0 1px 0 rgba(255,255,255,0.22);
     }
 
-    @media (max-width: 900px) {
-      body {
-        background-position: center bottom;
-        background-size: contain;
-      }
+    /*
+      En móvil NO movemos los bloques de sitio.
+      Solo reducimos un poco tamaños y separación si hace falta.
+    */
+    @media (max-width: 700px) {
       .left {
-        top: 5.5%;
-        left: 11%;
-        width: 24%;
+        width: 15.5%;
       }
-      .right {
-        top: 12%;
-        right: 5%;
-        width: 31%;
-      }
-      .big {
-        font-size: clamp(34px, 10vw, 72px);
-      }
-      .mid {
-        font-size: clamp(15px, 2.8vw, 24px);
-      }
-      .tiny, .sub {
-        letter-spacing: 0.03em;
-      }
-    }
 
-    @media (max-width: 640px) {
-      body {
-        background-position: center bottom;
-        background-size: contain;
-      }
-      .scene {
-        min-height: 100svh;
-      }
-      .left {
-        top: 7%;
-        left: 14%;
-        width: 22%;
-        transform: rotate(-2deg);
-      }
       .right {
-        top: 15%;
-        right: 6%;
-        width: 32%;
-        transform: rotate(-1deg);
-      }
-      .big {
-        font-size: clamp(28px, 9vw, 52px);
-        line-height: 0.92;
-      }
-      .tiny {
-        font-size: clamp(10px, 2.6vw, 13px);
-        margin-top: 4px;
-      }
-      .mid {
-        font-size: clamp(12px, 3vw, 18px);
-      }
-      .sub {
-        font-size: clamp(10px, 2.5vw, 13px);
-      }
-      .stack {
-        gap: 8px;
-        align-items: center;
-      }
-      .footer {
-        bottom: 2%;
-        font-size: 10px;
-      }
-    }
-
-    @media (max-width: 640px) and (orientation: portrait) {
-      body {
-        background-position: center bottom;
-        background-size: contain;
-      }
-      .left {
-        top: 8%;
-        left: 15%;
-        width: 20%;
-      }
-      .right {
-        top: 16.5%;
-        right: 7%;
         width: 30%;
       }
-      .big {
-        font-size: clamp(24px, 8vw, 46px);
-      }
-      .tiny {
-        font-size: clamp(9px, 2.4vw, 12px);
-      }
-      .sub {
-        font-size: clamp(9px, 2.3vw, 12px);
-      }
-    }
 
-    .stack {
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    @media (max-width: 640px) {
       .stack {
-        gap: 6px;
+        gap: 4px;
       }
 
-      .stack > div {
-        flex: 1 1 30%;
-        text-align: center;
-      }
-
-      .big {
-        font-size: clamp(20px, 7vw, 40px);
-      }
-
-      .sub {
-        font-size: 10px;
+      .tiny {
+        letter-spacing: 0.02em;
       }
     }
 
-    .right .big {
-      font-size: clamp(24px, 5vw, 60px);
-    }
+    /*
+      Si la pantalla es muy estrecha, mantenemos todo dentro.
+    */
+    @media (max-width: 480px) {
+      .scene {
+        width: 100%;
+      }
 
-    @media (max-width: 640px) {
+      .left {
+        width: 16%;
+      }
+
+      .right {
+        width: 31%;
+      }
+
       .right .big {
-        font-size: clamp(16px, 6vw, 32px);
+        font-size: clamp(12px, 3vw, 30px);
+      }
+
+      .right .sub {
+        font-size: clamp(6px, 0.9vw, 10px);
+      }
+
+      .footer {
+        bottom: 1.2%;
       }
     }
-
-    .right .big {
-      font-size: clamp(18px, 4vw, 40px);
-    }
-
   </style>
 </head>
 <body>
-  <main class="scene">
-    <div class="overlay"></div>
+  <main class="page">
+    <div class="scene">
+      <img src="fondo1.png" alt="" class="scene-image" />
+      <div class="overlay"></div>
 
-    <section class="note left">
-      <div class="tiny">DÍAS</div>
-      <div class="big" id="daysSince">--</div>
-      <div class="mid">retenidos</div>
-      <div class="sub">desde el <span class="scribble">1/3/2026</span></div>
-    </section>
+      <!-- BLOQUE IZQUIERDO -->
+      <section class="note left">
+        <div class="tiny">DÍAS</div>
+        <div class="big" id="daysSince">--</div>
+        <div class="mid">retenidos</div>
+        <div class="sub">desde el <span class="scribble">1/3/2026</span></div>
+      </section>
 
-    <section class="note right">
-     <div class="stack">
-  <div>
-    <div class="big" id="weeksLeft">--</div>
-    <div class="sub">sem</div>
-  </div>
-  <div>
-    <div class="big" id="daysLeft">--</div>
-    <div class="sub">días</div>
-  </div>
-  <div>
-    <div class="big" id="hoursLeft">--</div>
-    <div class="sub">h</div>
-  </div>
-  <div>
-    <div class="big" id="minutesLeft">--</div>
-    <div class="sub">min</div>
-  </div>
-  <div>
-    <div class="big" id="secondsLeft">--</div>
-    <div class="sub">seg</div>
-  </div>
-</div>
-      </div>
-      <div class="tiny" style="margin-top:8px;">si salgo el <span class="scribble">1/6/2027</span></div>
-    </section>
+      <!-- BLOQUE DERECHO -->
+      <section class="note right">
+        <div class="stack">
+          <div class="stack-item">
+            <div class="big" id="weeksLeft">--</div>
+            <div class="sub">sem</div>
+          </div>
 
-    <div class="footer" id="todayText"></div>
+          <div class="stack-item">
+            <div class="big" id="daysLeft">--</div>
+            <div class="sub">días</div>
+          </div>
+
+          <div class="stack-item">
+            <div class="big" id="hoursLeft">--</div>
+            <div class="sub">h</div>
+          </div>
+
+          <div class="stack-item">
+            <div class="big" id="minutesLeft">--</div>
+            <div class="sub">min</div>
+          </div>
+
+          <div class="stack-item">
+            <div class="big" id="secondsLeft">--</div>
+            <div class="sub">seg</div>
+          </div>
+        </div>
+
+        <div class="tiny right-extra">
+          si salgo el <span class="scribble">1/6/2027</span>
+        </div>
+      </section>
+
+      <div class="footer" id="todayText"></div>
+    </div>
   </main>
 
   <script>
@@ -292,43 +281,46 @@
       return Math.round((startOfDay(toDate) - startOfDay(fromDate)) / MS_PER_DAY);
     }
 
-   function updateCounters() {
-  const now = new Date();
+    function updateCounters() {
+      const now = new Date();
 
-  const target = new Date(2027, 5, 1, 0, 0, 0);
+      // 1 junio 2027
+      const target = new Date(2027, 5, 1, 0, 0, 0);
 
-  const start = new Date(2026, 2, 1);
+      // 1 marzo 2026
+      const start = new Date(2026, 2, 1);
 
-  let diff = target - now;
+      let diff = target - now;
+      if (diff < 0) diff = 0;
 
-  if (diff < 0) diff = 0;
+      const totalSeconds = Math.floor(diff / 1000);
 
-  const totalSeconds = Math.floor(diff / 1000);
+      const weeks = Math.floor(totalSeconds / (7 * 24 * 3600));
+      const days = Math.floor((totalSeconds % (7 * 24 * 3600)) / (24 * 3600));
+      const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
 
-  const weeks = Math.floor(totalSeconds / (7 * 24 * 3600));
-  const days = Math.floor((totalSeconds % (7 * 24 * 3600)) / (24 * 3600));
-  const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
+      const daysSince = Math.max(0, diffInDays(start, now));
 
-  const daysSince = Math.max(0, diffInDays(start, now));
+      document.getElementById("weeksLeft").textContent = weeks;
+      document.getElementById("daysLeft").textContent = days;
+      document.getElementById("hoursLeft").textContent = hours;
+      document.getElementById("minutesLeft").textContent = minutes;
+      document.getElementById("secondsLeft").textContent = seconds;
 
-  document.getElementById("weeksLeft").textContent = weeks;
-  document.getElementById("daysLeft").textContent = days;
-  document.getElementById("hoursLeft").textContent = hours;
-  document.getElementById("minutesLeft").textContent = minutes;
-  document.getElementById("secondsLeft").textContent = seconds;
+      document.getElementById("daysSince").textContent = daysSince;
 
-  document.getElementById("daysSince").textContent = daysSince;
+      document.getElementById("todayText").textContent =
+        "Actualizado a " +
+        now.toLocaleDateString("es-ES", {
+          day: "numeric",
+          month: "numeric",
+          year: "numeric"
+        });
+    }
 
-  document.getElementById("todayText").textContent =
-    "Actualizado a " +
-    now.toLocaleDateString("es-ES", {
-      day: "numeric",
-      month: "numeric",
-      year: "numeric"
-    });
-}
+    updateCounters();
     setInterval(updateCounters, 1000);
   </script>
 </body>
