@@ -1,169 +1,313 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Retenidos</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Retenidos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Gloria+Hallelujah&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      font-family: "Gloria Hallelujah", "Patrick Hand", "Segoe Print", cursive;
+      color: #1a1a1a;
+       background: url("fondo1.png") center center / contain no-repeat fixed;
+    }
 
-<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Gloria+Hallelujah&display=swap" rel="stylesheet">
+    .scene {
+      position: relative;
+      min-height: 100vh;
+      width: 100%;
+      overflow: hidden;
+    }
 
-<style>
-* { box-sizing: border-box; }
-html, body { height: 100%; margin: 0; }
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.06), rgba(255,255,255,0.10));
+      pointer-events: none;
+    }
 
-body {
-  font-family: "Gloria Hallelujah", "Patrick Hand", cursive;
-  color: #1a1a1a;
-  background: url("fondo1.png") center center / contain no-repeat fixed;
-}
+    .note {
+      position: absolute;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.18);
+      line-height: 1.05;
+      letter-spacing: 0.02em;
+    }
 
-.scene {
-  position: relative;
-  min-height: 100vh;
-  width: 100%;
-}
+     .left {
+      top: 6.5%;
+      left: 19%;
+      width: 22%;
+      text-align: left;
+      transform: rotate(-3deg);
+    }
 
-/* ===== BLOQUES ===== */
+    .right {
+      top: 15%;
+      right: 12%;
+      width: 28%;
+      text-align: center;
+      transform: rotate(-1deg);
+    }
 
-.note {
-  position: absolute;
-  text-align: center;
-}
+    .tiny {
+      font-size: clamp(14px, 1.8vw, 22px);
+      margin-bottom: 0.1em;
+      letter-spacing: 0.08em;
+    }
 
-/* IZQUIERDA */
-.left {
-  top: 8%;
-  left: 12%;
-  width: 22%;
-}
+    .big {
+      font-size: clamp(48px, 11vw, 120px);
+      font-weight: 900;
+      line-height: 0.85;
+      margin: 0.02em 0;
+    }
 
-/* DERECHA */
-.right {
-  top: 18%;
-  right: 10%;
-  width: 30%;
-}
+    .mid {
+      font-size: clamp(18px, 2.5vw, 32px);
+      letter-spacing: 0.06em;
+    }
 
-/* TEXTOS */
-.tiny { font-size: clamp(12px, 2vw, 20px); }
-.big { font-size: clamp(40px, 10vw, 100px); font-weight: bold; }
-.mid { font-size: clamp(16px, 3vw, 28px); }
-.sub { font-size: clamp(12px, 2vw, 18px); }
+    .stack {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: clamp(12px, 2vw, 26px);
+      flex-wrap: nowrap;
+      margin-top: 0.2em;
+    }
 
-/* CONTADORES */
-.stack {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-}
+    .sub {
+      font-size: clamp(13px, 1.5vw, 18px);
+      opacity: 0.95;
+      line-height: 1.05;
+      letter-spacing: 0.05em;
+    }
 
-.stack > div {
-  flex: 1 1 30%;
-}
+    .scribble {
+      display: inline-block;
+      border-bottom: 2px solid rgba(0,0,0,0.28);
+      padding-bottom: 0.05em;
+    }
 
-/* FOOTER */
-.footer {
-  position: absolute;
-  bottom: 3%;
-  width: 100%;
-  text-align: center;
-  font-size: 12px;
-}
+    .footer {
+      position: absolute;
+      left: 5%;
+      right: 5%;
+      bottom: 4%;
+      text-align: center;
+      font-size: clamp(11px, 1.2vw, 16px);
+      color: rgba(0,0,0,0.65);
+      text-shadow: 0 1px 0 rgba(255,255,255,0.22);
+    }
 
-/* ========================= */
-/* 📱 MÓVIL VERTICAL (CLAVE) */
-/* ========================= */
+    @media (max-width: 900px) {
+      body {
+        background-position: center bottom;
+        background-size: contain;
+      }
+      .left {
+        top: 5.5%;
+        left: 11%;
+        width: 24%;
+      }
+      .right {
+        top: 12%;
+        right: 5%;
+        width: 31%;
+      }
+      .big {
+        font-size: clamp(34px, 10vw, 72px);
+      }
+      .mid {
+        font-size: clamp(15px, 2.8vw, 24px);
+      }
+      .tiny, .sub {
+        letter-spacing: 0.03em;
+      }
+    }
 
-@media (max-width: 640px) and (orientation: portrait) {
+    @media (max-width: 640px) {
+      body {
+        background-position: center bottom;
+        background-size: contain;
+      }
+      .scene {
+        min-height: 100svh;
+      }
+      .left {
+        top: 7%;
+        left: 14%;
+        width: 22%;
+        transform: rotate(-2deg);
+      }
+      .right {
+        top: 15%;
+        right: 6%;
+        width: 32%;
+        transform: rotate(-1deg);
+      }
+      .big {
+        font-size: clamp(28px, 9vw, 52px);
+        line-height: 0.92;
+      }
+      .tiny {
+        font-size: clamp(10px, 2.6vw, 13px);
+        margin-top: 4px;
+      }
+      .mid {
+        font-size: clamp(12px, 3vw, 18px);
+      }
+      .sub {
+        font-size: clamp(10px, 2.5vw, 13px);
+      }
+      .stack {
+        gap: 8px;
+        align-items: center;
+      }
+      .footer {
+        bottom: 2%;
+        font-size: 10px;
+      }
+    }
 
-  body {
-    background-position: top center;
-    background-size: contain;
-  }
+    @media (max-width: 640px) and (orientation: portrait) {
+      body {
+        background-position: center bottom;
+        background-size: contain;
+      }
+      .left {
+        top: 8%;
+        left: 15%;
+        width: 20%;
+      }
+      .right {
+        top: 16.5%;
+        right: 7%;
+        width: 30%;
+      }
+      .big {
+        font-size: clamp(24px, 8vw, 46px);
+      }
+      .tiny {
+        font-size: clamp(9px, 2.4vw, 12px);
+      }
+      .sub {
+        font-size: clamp(9px, 2.3vw, 12px);
+      }
+    }
 
-  .note {
-    position: relative;   /* 🔥 CLAVE: quitamos absolute */
-    width: 100%;
-    left: 0;
-    right: 0;
-    transform: none;
-  }
+    .stack {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
 
-  .left {
-    margin-top: 20px;
-  }
+    @media (max-width: 640px) {
+      .stack {
+        gap: 6px;
+      }
 
-  .right {
-    margin-top: 20px;
-  }
+      .stack > div {
+        flex: 1 1 30%;
+        text-align: center;
+      }
 
-  .big {
-    font-size: clamp(24px, 8vw, 40px);
-  }
+      .big {
+        font-size: clamp(20px, 7vw, 40px);
+      }
 
-  .stack > div {
-    flex: 1 1 45%;
-  }
-}
-</style>
+      .sub {
+        font-size: 10px;
+      }
+    }
+
+    .right .big {
+      font-size: clamp(24px, 5vw, 60px);
+    }
+
+    @media (max-width: 640px) {
+      .right .big {
+        font-size: clamp(16px, 6vw, 32px);
+      }
+    }
+
+    .right .big {
+      font-size: clamp(18px, 4vw, 40px);
+    }
+
+  </style>
 </head>
-
 <body>
-<main class="scene">
+  <main class="scene">
+    <div class="overlay"></div>
 
-<!-- IZQUIERDA -->
-<section class="note left">
-  <div class="tiny">DÍAS</div>
-  <div class="big" id="daysSince">--</div>
-  <div class="mid">retenidos</div>
-  <div class="sub">desde el 1/3/2026</div>
-</section>
+    <section class="note left">
+      <div class="tiny">DÍAS</div>
+      <div class="big" id="daysSince">--</div>
+      <div class="mid">retenidos</div>
+      <div class="sub">desde el <span class="scribble">1/3/2026</span></div>
+    </section>
 
-<!-- DERECHA -->
-<section class="note right">
-  <div class="stack">
-    <div><div class="big" id="weeksLeft">--</div><div class="sub">sem</div></div>
-    <div><div class="big" id="daysLeft">--</div><div class="sub">días</div></div>
-    <div><div class="big" id="hoursLeft">--</div><div class="sub">h</div></div>
-    <div><div class="big" id="minutesLeft">--</div><div class="sub">min</div></div>
-    <div><div class="big" id="secondsLeft">--</div><div class="sub">seg</div></div>
+    <section class="note right">
+     <div class="stack">
+  <div>
+    <div class="big" id="weeksLeft">--</div>
+    <div class="sub">sem</div>
   </div>
-
-  <div class="tiny" style="margin-top:10px;">
-    si salgo el 1/6/2027
+  <div>
+    <div class="big" id="daysLeft">--</div>
+    <div class="sub">días</div>
   </div>
-</section>
+  <div>
+    <div class="big" id="hoursLeft">--</div>
+    <div class="sub">h</div>
+  </div>
+  <div>
+    <div class="big" id="minutesLeft">--</div>
+    <div class="sub">min</div>
+  </div>
+  <div>
+    <div class="big" id="secondsLeft">--</div>
+    <div class="sub">seg</div>
+  </div>
+</div>
+      </div>
+      <div class="tiny" style="margin-top:8px;">si salgo el <span class="scribble">1/6/2027</span></div>
+    </section>
 
-<div class="footer" id="todayText"></div>
+    <div class="footer" id="todayText"></div>
+  </main>
 
-</main>
+  <script>
+    const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
-<script>
-const MS_PER_DAY = 1000 * 60 * 60 * 24;
+    function startOfDay(date) {
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    }
 
-function startOfDay(date) {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-}
+    function diffInDays(fromDate, toDate) {
+      return Math.round((startOfDay(toDate) - startOfDay(fromDate)) / MS_PER_DAY);
+    }
 
-function diffInDays(fromDate, toDate) {
-  return Math.round((startOfDay(toDate) - startOfDay(fromDate)) / MS_PER_DAY);
-}
-
-function updateCounters() {
-
+   function updateCounters() {
   const now = new Date();
-  const target = new Date(2027, 5, 1);
+
+  const target = new Date(2027, 5, 1, 0, 0, 0);
+
   const start = new Date(2026, 2, 1);
 
   let diff = target - now;
+
   if (diff < 0) diff = 0;
 
   const totalSeconds = Math.floor(diff / 1000);
 
-  const weeks = Math.floor(totalSeconds / (7*24*3600));
-  const days = Math.floor((totalSeconds % (7*24*3600)) / (24*3600));
-  const hours = Math.floor((totalSeconds % (24*3600)) / 3600);
+  const weeks = Math.floor(totalSeconds / (7 * 24 * 3600));
+  const days = Math.floor((totalSeconds % (7 * 24 * 3600)) / (24 * 3600));
+  const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
 
@@ -178,12 +322,14 @@ function updateCounters() {
   document.getElementById("daysSince").textContent = daysSince;
 
   document.getElementById("todayText").textContent =
-    "Actualizado: " + now.toLocaleDateString("es-ES");
+    "Actualizado a " +
+    now.toLocaleDateString("es-ES", {
+      day: "numeric",
+      month: "numeric",
+      year: "numeric"
+    });
 }
-
-setInterval(updateCounters, 1000);
-updateCounters();
-</script>
-
+    setInterval(updateCounters, 1000);
+  </script>
 </body>
 </html>
