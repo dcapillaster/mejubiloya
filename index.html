@@ -199,6 +199,29 @@
         font-size: clamp(9px, 2.3vw, 12px);
       }
     }
+    .stack {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+@media (max-width: 640px) {
+  .stack {
+    gap: 6px;
+  }
+
+  .stack > div {
+    flex: 1 1 30%;
+    text-align: center;
+  }
+
+  .big {
+    font-size: clamp(20px, 7vw, 40px);
+  }
+
+  .sub {
+    font-size: 10px;
+  }
+}
   </style>
 </head>
 <body>
@@ -213,16 +236,28 @@
     </section>
 
     <section class="note right" aria-label="Cuenta atrás">
-      <div class="stack">
-        <div>
-          <div class="big" id="weeksLeft">--</div>
-          <div class="sub">semanas</div>
-        </div>
-        <div class="mid">y</div>
-        <div>
-          <div class="big" id="daysLeft">--</div>
-          <div class="sub">días</div>
-        </div>
+     <div class="stack">
+  <div>
+    <div class="big" id="weeksLeft">--</div>
+    <div class="sub">sem</div>
+  </div>
+  <div>
+    <div class="big" id="daysLeft">--</div>
+    <div class="sub">días</div>
+  </div>
+  <div>
+    <div class="big" id="hoursLeft">--</div>
+    <div class="sub">h</div>
+  </div>
+  <div>
+    <div class="big" id="minutesLeft">--</div>
+    <div class="sub">min</div>
+  </div>
+  <div>
+    <div class="big" id="secondsLeft">--</div>
+    <div class="sub">seg</div>
+  </div>
+</div>
       </div>
       <div class="tiny" style="margin-top:8px;">si salgo el <span class="scribble">1/6/2027</span></div>
     </section>
@@ -241,31 +276,45 @@
       return Math.round((startOfDay(toDate) - startOfDay(fromDate)) / MS_PER_DAY);
     }
 
-    function updateCounters() {
-      const today = new Date();
-      const target = new Date(2027, 5, 1);
-      const start = new Date(2026, 2, 1);
+   function updateCounters() {
+  const now = new Date();
 
-      const totalLeft = Math.max(0, diffInDays(today, target));
-      const weeks = Math.floor(totalLeft / 7);
-      const days = totalLeft % 7;
-      const daysSince = Math.max(0, diffInDays(start, today));
+  // Fecha objetivo (1 junio 2027 a las 00:00)
+  const target = new Date(2027, 5, 1, 0, 0, 0);
 
-      document.getElementById("weeksLeft").textContent = weeks;
-      document.getElementById("daysLeft").textContent = days;
-      document.getElementById("daysSince").textContent = daysSince;
+  const start = new Date(2026, 2, 1);
 
-      document.getElementById("todayText").textContent =
-        "Actualizado a " +
-        today.toLocaleDateString("es-ES", {
-          day: "numeric",
-          month: "numeric",
-          year: "numeric"
-        });
-    }
+  let diff = target - now;
 
-    updateCounters();
-    setInterval(updateCounters, 60000);
+  if (diff < 0) diff = 0;
+
+  const totalSeconds = Math.floor(diff / 1000);
+
+  const weeks = Math.floor(totalSeconds / (7 * 24 * 3600));
+  const days = Math.floor((totalSeconds % (7 * 24 * 3600)) / (24 * 3600));
+  const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  const daysSince = Math.max(0, diffInDays(start, now));
+
+  document.getElementById("weeksLeft").textContent = weeks;
+  document.getElementById("daysLeft").textContent = days;
+  document.getElementById("hoursLeft").textContent = hours;
+  document.getElementById("minutesLeft").textContent = minutes;
+  document.getElementById("secondsLeft").textContent = seconds;
+
+  document.getElementById("daysSince").textContent = daysSince;
+
+  document.getElementById("todayText").textContent =
+    "Actualizado a " +
+    now.toLocaleDateString("es-ES", {
+      day: "numeric",
+      month: "numeric",
+      year: "numeric"
+    });
+}
+    setInterval(updateCounters, 1000);
   </script>
 </body>
 </html>
