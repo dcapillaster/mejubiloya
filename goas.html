@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Retenidos</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Gloria+Hallelujah&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      font-family: "Gloria Hallelujah", "Patrick Hand", "Segoe Print", cursive;
+      background: #ececec;
+      color: #1a1a1a;
+    }
+
+    /* Contenedor general centrado */
+    .page {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 12px;
+    }
+
+    /*
+      Este contenedor mantiene SIEMPRE la proporción de la imagen.
+      Ajusta 1365 / 768 si tu fondo tiene otra resolución/proporción real.
+    */
+     .scene {
+      position: relative;
+      width: min(100%, 1288px);
+      aspect-ratio: 1288 / 832;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    /* Imagen base */
+    .scene-image {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.04),
+        rgba(255,255,255,0.08)
+      );
+      pointer-events: none;
+    }
+
+    .note {
+      position: absolute;
+      z-index: 2;
+      line-height: 1.02;
+      letter-spacing: 0.01em;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.2);
+    }
+
+    /* BLOQUE IZQUIERDO */
+    .left {
+      top: 7.2%;
+      left: 4%;
+      width: 14.5%;
+      text-align: center;
+      transform: rotate(-3deg);
+    }
+
+    /* BLOQUE DERECHO */
+    .right {
+      top: 18.2%;
+      right: 6%;
+      width: 28%;
+      text-align: center;
+      transform: rotate(-1deg);
+    }
+
+    .tiny {
+      font-size: clamp(8px, 1.25vw, 22px);
+      line-height: 1.05;
+      margin-bottom: 0.15em;
+      letter-spacing: 0.05em;
+    }
+
+    .big {
+      font-size: clamp(22px, 5vw, 86px);
+      font-weight: 900;
+      line-height: 0.88;
+      margin: 0.02em 0;
+    }
+
+    .mid {
+      font-size: clamp(11px, 1.9vw, 32px);
+      line-height: 1.05;
+    }
+
+    .sub {
+      font-size: clamp(8px, 1.05vw, 18px);
+      line-height: 1.05;
+      opacity: 0.97;
+    }
+
+    .scribble {
+      display: inline-block;
+      border-bottom: 2px solid rgba(0,0,0,0.28);
+      padding-bottom: 0.02em;
+    }
+
+    /* Contador derecho */
+    .stack {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: clamp(4px, 0.8vw, 18px);
+      align-items: end;
+      justify-items: center;
+      margin-top: 0.1em;
+    }
+
+    .stack-item {
+      min-width: 0;
+    }
+
+    .right .big {
+      font-size: clamp(14px, 3.2vw, 58px);
+      line-height: 0.9;
+    }
+
+    .right .sub {
+      font-size: clamp(7px, 0.95vw, 18px);
+    }
+
+    .right-extra {
+      margin-top: 0.45em;
+    }
+
+    .footer {
+      position: absolute;
+      z-index: 2;
+      left: 0;
+      right: 0;
+      bottom: 1.8%;
+      text-align: center;
+      font-size: clamp(7px, 0.95vw, 16px);
+      color: rgba(0,0,0,0.68);
+      text-shadow: 0 1px 0 rgba(255,255,255,0.22);
+    }
+
+    /*
+      En móvil NO movemos los bloques de sitio.
+      Solo reducimos un poco tamaños y separación si hace falta.
+    */
+    @media (max-width: 700px) {
+      .left {
+        width: 15.5%;
+      }
+
+      .right {
+        width: 30%;
+      }
+
+      .stack {
+        gap: 4px;
+      }
+
+      .tiny {
+        letter-spacing: 0.02em;
+      }
+    }
+
+    /*
+      Si la pantalla es muy estrecha, mantenemos todo dentro.
+    */
+    @media (max-width: 480px) {
+      .scene {
+        width: 100%;
+      }
+
+      .left {
+        width: 16%;
+      }
+
+      .right {
+        width: 31%;
+      }
+
+      .right .big {
+        font-size: clamp(12px, 3vw, 30px);
+      }
+
+      .right .sub {
+        font-size: clamp(6px, 0.9vw, 10px);
+      }
+
+      .footer {
+        bottom: 1.2%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="scene">
+      <img src="goas.png" alt="" class="scene-image" />
+      <div class="overlay"></div>
+
+      <!-- BLOQUE IZQUIERDO -->
+      <section class="note left">
+        <div class="tiny">DÍAS</div>
+        <div class="big" id="daysSince">--</div>
+        <div class="mid">retenidos</div>
+        <div class="sub">desde el <span class="scribble">1/3/2026</span></div>
+      </section>
+
+      <!-- BLOQUE DERECHO -->
+      <section class="note right">
+        <div class="stack">
+          <div class="stack-item">
+            <div class="big" id="weeksLeft">--</div>
+            <div class="sub">sem</div>
+          </div>
+
+          <div class="stack-item">
+            <div class="big" id="daysLeft">--</div>
+            <div class="sub">días</div>
+          </div>
+
+          <div class="stack-item">
+            <div class="big" id="hoursLeft">--</div>
+            <div class="sub">h</div>
+          </div>
+
+          <div class="stack-item">
+            <div class="big" id="minutesLeft">--</div>
+            <div class="sub">min</div>
+          </div>
+
+          <div class="stack-item">
+            <div class="big" id="secondsLeft">--</div>
+            <div class="sub">seg</div>
+          </div>
+        </div>
+
+        <div class="tiny right-extra">
+          si salgo el <span class="scribble">1/6/2027</span>
+        </div>
+      </section>
+
+      <div class="footer" id="todayText"></div>
+    </div>
+  </main>
+
+  <script>
+    const MS_PER_DAY = 1000 * 60 * 60 * 24;
+
+    function startOfDay(date) {
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    }
+
+    function diffInDays(fromDate, toDate) {
+      return Math.round((startOfDay(toDate) - startOfDay(fromDate)) / MS_PER_DAY);
+    }
+
+    function updateCounters() {
+      const now = new Date();
+
+      // 1 junio 2027
+      const target = new Date(2027, 5, 1, 0, 0, 0);
+
+      // 1 marzo 2026
+      const start = new Date(2026, 2, 1);
+
+      let diff = target - now;
+      if (diff < 0) diff = 0;
+
+      const totalSeconds = Math.floor(diff / 1000);
+
+      const weeks = Math.floor(totalSeconds / (7 * 24 * 3600));
+      const days = Math.floor((totalSeconds % (7 * 24 * 3600)) / (24 * 3600));
+      const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      const daysSince = Math.max(0, diffInDays(start, now));
+
+      document.getElementById("weeksLeft").textContent = weeks;
+      document.getElementById("daysLeft").textContent = days;
+      document.getElementById("hoursLeft").textContent = hours;
+      document.getElementById("minutesLeft").textContent = minutes;
+      document.getElementById("secondsLeft").textContent = seconds;
+
+      document.getElementById("daysSince").textContent = daysSince;
+
+      document.getElementById("todayText").textContent =
+        "Actualizado a " +
+        now.toLocaleDateString("es-ES", {
+          day: "numeric",
+          month: "numeric",
+          year: "numeric"
+        });
+    }
+
+    updateCounters();
+    setInterval(updateCounters, 1000);
+  </script>
+</body>
+</html>
